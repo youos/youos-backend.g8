@@ -1,0 +1,43 @@
+version: '2'
+
+# this docker-compose file is for running on the production-instance
+
+services:
+  fluentd:
+    image: fluent/fluentd:v1.2
+    ports:
+    - "240$portsuffix$:24224"
+    - "240$portsuffix$:24224/udp"
+    volumes:
+    - ./fluentd-conf:/fluentd/etc/fluentd.conf
+    - /var/log/$projectname;format="normalize"$/:/var/log/$projectname;format="normalize"$/
+    environment:
+      FLUENTD_CONF: fluentd.conf
+    logging:
+      driver: json-file
+      options:
+        max-size: 2m
+
+  $name$:
+    image: dev.docker.inspired.ag/$name$:latest
+    depends_on:
+    - fluentd
+    ports:
+    - "90$portsuffix$:80"
+    volumes:
+    - sessions_cache:/usr/share/$name$/onshutdown_user_sessions.ser
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:240$portsuffix$"
+        tag: "$name$"
+    environment:
+    - FRONTEND_URL=www.$projectname;format="normalize"$.$domain$
+    - BACKEND_URL=api.$projectname;format="normalize"$.$domain$
+    - DB_HOST=abc.TODO.eu-central-1.rds.amazonaws.com
+    - DB_USER=root
+    - DB_PASSWORD=TODO
+    - AWS_ENABLED=true
+
+volumes:
+  sessions_cache:

@@ -1,0 +1,11 @@
+# nginx configuration file for test environment (forward to SSL)
+server {
+  listen       [::]:80;
+  listen       80;
+  server_name $name$.test.inspired.ag;
+  client_max_body_size	10M;
+
+  location / {
+    proxy_pass http://127.0.0.1:90$portsuffix$;
+  }
+}

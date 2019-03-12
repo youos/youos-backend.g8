@@ -1,0 +1,77 @@
+image: bitbucketpipelines/scala-sbt:scala-2.12
+
+pipelines:
+  branches:
+    master:
+    - step:
+        name: buildAndDeployDocker
+        # somehow it is slower with caches?! (due to up- and download of caches)
+        #caches:
+        #  - sbt
+        #  - ivy2
+        #  - docker
+        script:
+          - sbt compile
+          - sbt package
+          - sbt assembly
+          - docker build -t \$D_REGISTRY/$name$:latest .
+          - docker login --username \$D_USER --password \$D_PASSWORD \$D_REGISTRY
+          - docker push \$D_REGISTRY/$name$:latest
+        services:
+          - docker
+          - mariadb
+    - step:
+        name: startOnDevenv
+        deployment: staging
+        script:
+          - ssh -t ubuntu@test.inspired.ag 'mkdir -p ~/continuous-delivery/$name$/'
+          - scp $name$-proxy-test* ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/
+          - scp fluentd-conf ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/
+          - scp docker-compose-test.yml ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/docker-compose.yml
+          - ssh -t ubuntu@test.inspired.ag 'sudo cp /home/ubuntu/continuous-delivery/$name$/$name$-proxy-test* /etc/nginx/sites-enabled/'
+          - ssh -t ubuntu@test.inspired.ag 'sudo service nginx reload'
+          - ssh -t ubuntu@test.inspired.ag 'cd ~/continuous-delivery/$name$/
+            && sudo docker-compose pull
+            && sudo docker-compose down
+            && sudo docker-compose up -d'
+
+    $domain$:
+    - step:
+        name: buildAndDeployDocker
+        # somehow it is slower with caches?! (due to up- and download of caches)
+        #caches:
+        #  - sbt
+        #  - ivy2
+        #  - docker
+        script:
+          - sbt compile
+          - sbt package
+          - sbt assembly
+          - docker build -t \$D_REGISTRY/$name$:latest ./$name$/
+          - docker login --username \$D_USER --password \$D_PASSWORD \$D_REGISTRY
+          - docker push \$D_REGISTRY/$name$:latest
+        services:
+          - docker
+          - mariadb
+    - step:
+        name: startOnProd
+        deployment: production
+        script:
+          - ssh -t ubuntu@api.$domain$ 'mkdir -p ~/continuous-delivery/$name$/'
+          - scp $name$-proxy-prod* ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/
+          - scp fluentd-conf ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/
+          - scp docker-compose-prod.yml ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/docker-compose.yml
+          - ssh -t ubuntu@api.$domain$ 'sudo cp /home/ubuntu/continuous-delivery/$name$/$name$-proxy-prod* /etc/nginx/sites-enabled/'
+          - ssh -t ubuntu@api.$domain$ 'sudo service nginx reload'
+          - ssh -t ubuntu@api.$domain$ 'cd ~/continuous-delivery/$name$/
+            && sudo docker-compose pull
+            && sudo docker-compose down
+            && sudo docker-compose up -d'
+
+definitions:
+  services:
+    mariadb:
+      image: mariadb
+      environment:
+        MYSQL_DATABASE: '$projectname;format="normalize"$'
+        MYSQL_ROOT_PASSWORD: dcrowd

@@ -1,0 +1,37 @@
+version: '2'
+
+# this docker-compose file is for running and testing locally on the developer's machine
+
+services:
+  $projectname;format="normalize"$-db:
+    image: mariadb
+    ports:
+    - "3306:3306"
+    volumes:
+    - $projectname;format="normalize"$-db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: $projectname;format="normalize"$
+      MYSQL_ROOT_PASSWORD: dcrowd
+
+  $name$:
+    build:
+      context: .
+    image: dev.docker.inspired.ag/$name$:latest
+    depends_on:
+    - $projectname;format="normalize"$-db
+    ports:
+    - "8080:8080"
+    volumes:
+    - uploaded_data:/usr/share/$name$/uploaded_data
+    environment:
+    - PORT=8080
+    - FRONTEND_URL=localhost:3000
+    - BACKEND_URL=localhost:8080
+    - DB_HOST=$projectname;format="normalize"$-db
+    - DB_USER=root
+    - DB_PASSWORD=dcrowd
+    - AWS_ENABLED=false
+
+volumes:
+  $projectname;format="normalize"$-db:
+  uploaded_data:

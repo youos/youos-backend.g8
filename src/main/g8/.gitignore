@@ -1,0 +1,15 @@
+# compiled files
+*/target/*
+*/target/**
+target/**
+
+# idea files
+.idea/workspace.xml
+.idea/libraries/**
+.idea/modules/**
+.idea/markdown-navigator.xml
+.idea/markdown-navigator/profiles_settings.xml
+
+uploaded_data/**
+*.ser
+log/**
