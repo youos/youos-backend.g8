@@ -1,4 +1,4 @@
-# nginx configuration file for production environment (forward to SSL)
+# nginx configuration file for production environment
 server {
   listen       [::]:80;
   listen       80;

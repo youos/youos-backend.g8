@@ -1,4 +1,4 @@
-# nginx configuration file for test environment (forward to SSL)
+# nginx configuration file for test environment
 server {
   listen       [::]:80;
   listen       80;

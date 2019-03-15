@@ -25,6 +25,7 @@ pipelines:
         deployment: staging
         script:
           - ssh -t ubuntu@test.inspired.ag 'mkdir -p ~/continuous-delivery/$name$/'
+          - ssh -t ubuntu@api.$domain$ 'sudo mkdir -p /var/log/$name$/ && sudo chown ubuntu /var/log/$name$ && sudo chgrp ubuntu /var/log/$name$'
           - scp $name$-proxy-test* ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/
           - scp fluentd-conf ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/
           - scp docker-compose-test.yml ubuntu@test.inspired.ag:/home/ubuntu/continuous-delivery/$name$/docker-compose.yml
@@ -58,6 +59,7 @@ pipelines:
         deployment: production
         script:
           - ssh -t ubuntu@api.$domain$ 'mkdir -p ~/continuous-delivery/$name$/'
+          - ssh -t ubuntu@api.$domain$ 'sudo mkdir -p /var/log/$name$/ && sudo chown ubuntu /var/log/$name$ && sudo chgrp ubuntu /var/log/$name$'
           - scp $name$-proxy-prod* ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/
           - scp fluentd-conf ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/
           - scp docker-compose-prod.yml ubuntu@api.$domain$:/home/ubuntu/continuous-delivery/$name$/docker-compose.yml

@@ -1,0 +1,62 @@
+version: '2'
+
+# this docker-compose file is for running on the test-instance
+
+services:
+  fluentd:
+    image: fluent/fluentd:v1.2
+    ports:
+    - "240$portsuffix$:24224"
+    - "240$portsuffix$:24224/udp"
+    volumes:
+    - ./fluentd-conf:/fluentd/etc/fluentd.conf
+    - /var/log/$projectname;format="normalize"$/:/var/log/$projectname;format="normalize"$/
+    environment:
+      FLUENTD_CONF: fluentd.conf
+    logging:
+      driver: json-file
+      options:
+        max-size: 2m
+
+  $projectname;format="normalize"$-db:
+    image: mariadb
+    depends_on:
+    - fluentd
+    ports:
+    - "33$portsuffix$:3306"
+    volumes:
+    - $projectname;format="normalize"$-db:/var/lib/mysql
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:24012"
+        tag: "mariadb"
+    environment:
+      MYSQL_DATABASE: $projectname;format="normalize"$
+      MYSQL_ROOT_PASSWORD: dcrowd
+
+  $name$:
+    image: dev.docker.inspired.ag/$name$:latest
+    depends_on:
+    - $projectname;format="normalize"$-db
+    - fluentd
+    ports:
+    - "90$portsuffix$:80"
+    volumes:
+    - uploaded_data:/usr/share/$name$/uploaded_data
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:240$portsuffix$"
+        tag: "$name$"
+    environment:
+    - FRONTEND_URL=$projectname;format="normalize"$.test.inspired.ag
+    - BACKEND_URL=$projectname;format="normalize"$-api.$projectname;format="normalize"$.test.inspired.ag
+    - DB_HOST=$projectname;format="normalize"$-db
+    - DB_USER=root
+    - DB_PASSWORD=dcrowd
+    - AWS_ENABLED=false
+
+volumes:
+  $projectname;format="normalize"$-db:
+  uploaded_data:
