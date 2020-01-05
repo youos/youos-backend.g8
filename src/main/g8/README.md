@@ -16,7 +16,7 @@ from there.
 - If you need debugging and quicker restarts, stop the $name$ container (not the database)
 and run `$package$.Main` directly from your IDE instead.
     - `docker-compose down`
-    - `docker-compose up $projectname;format="normalize"$-db -d`
+    - `docker-compose up -d $projectname;format="normalize"$-db`
     - Rightclick `$package$.Main` in your IDE and click run/debug. Then click stop. 
     - Go to Run/Debug Configurations in IntelliJ and configure your Main as follows:
         - Activate Share and Single instance only
@@ -24,7 +24,7 @@ and run `$package$.Main` directly from your IDE instead.
     - You can now use this build-configuration to run/debug from IntelliJ
 - When the database is running (see above first steps), you can also use `sbt run`
 - When running the test cases (`sbt test`), ensure the database container is up and 
-  running (`docker-compose up $projectname;format="normalize"$-db -d`).
+  running (`docker-compose up -d $projectname;format="normalize"$-db`).
 
 ### Using Bitbucket Pipelines for CI/CD
 This template comes with preconfigured pipeline definition for bitbucket 
