@@ -5,7 +5,7 @@ ThisBuild / scalaVersion := "2.12.6"
 
 lazy val akkaVersion = "2.5.21"
 lazy val akkaHttpVersion = "10.1.7"
-lazy val youosVersion = "1.0.2"
+lazy val youosVersion = "1.0.4"
 
 name := "$name$"
 
