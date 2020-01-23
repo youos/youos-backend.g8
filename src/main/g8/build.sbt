@@ -27,6 +27,9 @@ lazy val root = (project in file("."))
     libraryDependencies += "com.typesafe" % "config" % "1.3.3",
     libraryDependencies += "com.youos" %% "service-framework" % youosVersion,
     libraryDependencies += "com.youos" %% "user-modules" % youosVersion,
+    libraryDependencies += "com.youos" %% "inbox-modules" % youosVersion,
+    libraryDependencies += "com.youos" %% "typed-entity-modules" % youosVersion,
+    libraryDependencies += "com.youos" %% "sector-modules" % youosVersion,
     libraryDependencies += "com.youos" %% "youos-test" % youosVersion % Test,
 
     mainClass in Compile := Some("$package$.Main"),
