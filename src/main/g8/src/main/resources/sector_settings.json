@@ -1,0 +1,28 @@
+{
+  "sectorArea": {
+    "name": "World",
+    "decimalLatitude1": -85.0,
+    "decimalLongitude1": -180.0,
+    "decimalLatitude2": 85.0,
+    "decimalLongitude2": 180.0
+  },
+  "publicAreas": [
+    {
+      "name": "World",
+      "decimalLatitude1": -85.0,
+      "decimalLongitude1": -180.0,
+      "decimalLatitude2": 85.0,
+      "decimalLongitude2": 180.0
+    }
+  ],
+  "nearbyAccountsRadius": 5000.0,
+  "initialCompoundReceiverSize": 6400,
+  "initialSectorReceiverSize": 100,
+
+  "minimumSectorSize": 250,
+  "sectorSplitsN": 8,
+  "sectorSplitsE": 8,
+  "splitWithNumElements": 200,
+  "mergeWithNumElements": 120,
+  "inertia": 10
+}
